@@ -6,6 +6,7 @@ import re
 import sys
 import time
 import json
+import ssl
 import socket
 import locale
 import logging
@@ -381,7 +382,8 @@ def urlopen_with_retry(*args, **kwargs):
     retry_time = 3
     for i in range(retry_time):
         try:
-            return request.urlopen(*args, **kwargs)
+            context = ssl._create_unverified_context()
+            return request.urlopen(*args, **kwargs, context=context)
         except socket.timeout as e:
             logging.debug('request attempt %s timeout' % str(i + 1))
             if i + 1 == retry_time:
